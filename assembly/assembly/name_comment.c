@@ -50,15 +50,40 @@ int		content_start(char *file, int start)
 	return (-1);
 }
 
+char	*get_content(char **file, int line, int act)
+{
+	char			*content;
+	int				i;
+	int				len;
+
+	content = NULL;
+	i = 0;
+	if ((content = ft_strnew((act == 5 ? 128 : 200))))
+	{
+		len = content_start(&file[line][act], act);
+		while (file[line][len] != '\"')
+		{
+			content[i] = file[line][len];
+			if (!file[line][len])
+			{
+				len = -1;
+				content[i] = '\n';
+				line++;
+			}
+			len++;
+			i++;
+		}
+	}
+	return (content);
+
+}
+
 char	*get_name(char **file, int *act)
 {
-	int		len;
+	int			len;
 
-	if (!strncmp(file[0], ".name", 5) && (len = get_len(file, content_start(&file[0][5], 5), act)))
-	{
-		ft_printf("%d\n", len);
-		return (NULL);
-	}
+	if (!strncmp(file[0], ".name", 5) && (len = get_len(file, content_start(&file[0][5], 5), act) > 0) && len <= 128)
+		return (get_content(file, 0, 5));
 	return (NULL);
 }
 
@@ -69,10 +94,7 @@ char	*get_comment(char **file, int *line)
 
 	save_start = *line;
 	if (!strncmp(file[*line], ".comment", 8) && (len = get_len(file, content_start(&file[*line][8], 8), line)))
-	{
-		ft_printf("%d\n", len);
-		return (NULL);
-	}
+		return (get_content(file, save_start, 8));
 	return (NULL);
 }
 
@@ -82,7 +104,9 @@ void	get_name_and_comment(char **file, char **champion_describe)
 
 	act = 0;
 	champion_describe[0] = get_name(file, &act);
+	ft_printf("%s\n", champion_describe[0]);
 	champion_describe[1] = get_comment(file, &act);
+	ft_printf("%s\n", champion_describe[1]);
 }
 
 char	**check_name_and_comment(char **file)

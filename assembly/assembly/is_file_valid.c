@@ -15,14 +15,16 @@
 
 int		is_file_valid(char **file)
 {
-	if (check_name_and_comment(file))
+	char **name;
+
+	if ((name = check_name_and_comment(file)))
 		return (1);
 	return (0);
 }
 
 int		*turn_into_hex(char **file)
 {
-	ft_printf("MEW\n");
+	ft_printf("going into hex function \n");
 	if (file)
 		return (NULL);
 	return (NULL);
