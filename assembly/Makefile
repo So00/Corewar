@@ -1,0 +1,55 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: atourner <marvin@42.fr>                    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2017/11/07 10:42:44 by atourner          #+#    #+#              #
+#    Updated: 2018/04/18 10:10:18 by atourner         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+NAME = asm
+
+FLAGS = -Wall -Werror -Wextra
+
+SRC_PATH = assembly/
+
+COMP_PATH = obj/
+
+SRC_ASSEMBLY = \
+			my_ass.c\
+			check_file.c\
+			printf_file.c\
+			is_file_valid.c\
+			name_comment.c\
+
+SRC = $(addprefix $(SRC_PATH), $(SRC_ASSEMBLY))
+
+COMP_NAME = $(SRC:.c=.o)
+
+all : LIB $(NAME)
+
+LIB:
+	@make -C ft_printf
+
+%.o : %.c
+	@gcc $(FLAGS) -o $@ -c $< -Ift_printf/includes -Iincludes
+
+$(NAME) : $(COMP_NAME)
+	@gcc -o $(NAME) $(COMP_NAME) ft_printf/libftprintf.a
+	@echo "\033[0;35mCompilation de la l'assembleur fini\033[0m"
+
+clean :
+	@echo "\033[0;31mPiou piou partially erased zone\033[0m"
+	@rm -f $(COMP_NAME)
+
+fclean : clean
+	@echo "\033[0;31mPiou piou sector clear\033[0m"
+	@rm -f $(NAME)
+
+re : recompil fclean all
+
+recompil :
+	@echo "\033[0;33mRecompilation de l'assembleur\033[0m"
