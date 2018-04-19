@@ -14,17 +14,21 @@
 # define ASM_H
 # include <fcntl.h>
 
+typedef struct		s_label
+{
+	char				*name;
+	char				*command;
+	int					relative_pos;
+	int					size;
+	struct	s_label		*next;
+}					t_label;
+
 int		valid_name(char *name);
 int		*val_asm(int fd);
 void	print_in_file(int *to_print, char *name);
 int		*turn_into_hex(char **file);
-int		is_file_valid(char **file);
-char	**check_name_and_comment(char **file);
-
-typedef struct	s_adress
-{
-	char	*name;
-	int		relative_pos;
-}				t_adress;
+int		*is_file_valid(char **file);
+char	**check_name_and_comment(char **file, int *act);
+t_label	*get_label(char **name, int line);
 
 #endif

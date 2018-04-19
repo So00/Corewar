@@ -12,20 +12,27 @@
 
 #include "ft_printf.h"
 #include "asm.h"
+#include "op.h"
 
-int		is_file_valid(char **file)
+int			*create_champion(char **name, t_label *first)
 {
-	char **name;
-
-	if ((name = check_name_and_comment(file)))
-		return (1);
-	return (0);
-}
-
-int		*turn_into_hex(char **file)
-{
-	ft_printf("going into hex function \n");
-	if (file)
+	if (first && name)
 		return (NULL);
 	return (NULL);
+}
+
+int			*is_file_valid(char **file)
+{
+	char		**name;
+	int			*ret;
+	t_label		*first;
+	int			last_line;
+
+	ret = NULL;
+	first = NULL;
+	name = check_name_and_comment(file, &last_line);
+	if (name)
+		first = get_label(file, last_line);
+	ret = create_champion(name, first);
+	return (ret);
 }

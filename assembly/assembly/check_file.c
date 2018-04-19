@@ -12,6 +12,7 @@
 
 #include "ft_printf.h"
 #include "asm.h"
+#include "op.h"
 
 static char		**realloc_ar(char **tmp, char **act, int nb)
 {
@@ -67,8 +68,7 @@ int				*val_asm(int fd)
 		file = read_file(fd);
 		if (file)
 		{
-			if (is_file_valid(file))
-				ret = turn_into_hex(file);
+			ret = is_file_valid(file);
 			ft_free_ar((void**)file);
 		}
 	}

@@ -12,6 +12,7 @@
 
 #include "ft_printf.h"
 #include "asm.h"
+#include "op.h"
 
 int		get_len(char **file, int i, int *act)
 {
@@ -34,8 +35,7 @@ int		get_len(char **file, int i, int *act)
 		i++;
 		len++;
 	}
-	if (*act == 0)
-		*act = line + 1;
+	*act = line + 1;
 	return (len);
 }
 
@@ -58,7 +58,7 @@ char	*get_content(char **file, int line, int act)
 	int				len;
 
 	i = 0;
-	if ((content = ft_strnew((line == 0 ? 128 : 2048))))
+	if ((content = ft_strnew((line == 0 ? PROG_NAME_LENGTH : COMMENT_LENGTH))))
 	{
 		len = content_start(&file[line][act], act);
 		while (file[line][len] != '\"')
@@ -77,27 +77,38 @@ char	*get_content(char **file, int line, int act)
 	return (content);
 }
 
+void	get_describe_len(int *name_len, int *cmd_len, int *len)
+{
+	*name_len = (int)ft_strlen(NAME_CMD_STRING);
+	*cmd_len = (int)ft_strlen(COMMENT_CMD_STRING);
+	*len = 0;
+}
+
 char	*get_describe(char **file, int *act, int choice)
 {
 	int			len;
+	int			cmd_len;
+	int			name_len;
+	int			save;
 
-	len = 0;
+	get_describe_len(&name_len, &cmd_len, &len);
 	if (!choice)
 	{
-		if (!strncmp(file[0], ".name", 5)
-		&& ((len = get_len(file, content_start(&file[0][5], 5), act)) > 0)
+		if (!strncmp(file[0], NAME_CMD_STRING, name_len) && ((len =
+		get_len(file, content_start(&file[0][name_len], name_len), act)) > 0)
 		&& len <= 128)
-			return (get_content(file, 0, content_start(&file[0][5], 5)));
+			return (get_content(file, 0, content_start(&file[0][name_len], 5)));
 		else
 			ft_printf("%s\n", len <= 0 ? "Wrong name format" : "Max name len is\
 128");
 	}
 	else
 	{
-		if (!strncmp(file[*act], ".comment", 8)
-		&& ((len = get_len(file, content_start(&file[*act][8], 8), act)) > 0)
+		save = *act;
+		if (!strncmp(file[*act], COMMENT_CMD_STRING, cmd_len) && ((len =
+		get_len(file, content_start(&file[*act][cmd_len], cmd_len), act)) > 0)
 		&& len <= 2048)
-			return (get_content(file, *act, 8));
+			return (get_content(file, save, 8));
 		else
 			ft_printf("%s\n", len <= 0 ? "Wrong comment format" : "Max comment \
 len is 2048");
@@ -105,19 +116,18 @@ len is 2048");
 	return (NULL);
 }
 
-char	**check_name_and_comment(char **file)
+char	**check_name_and_comment(char **file, int *act)
 {
 	char	**champion_describe;
-	int		act;
 
-	act = 0;
+	*act = 0;
 	if (!(champion_describe = (char**)malloc(sizeof(char*) * 2)))
 	{
 		ft_printf("Malloc error\nCheck your memory\n");
 		return (NULL);
 	}
-	champion_describe[0] = get_describe(file, &act, 0);
-	champion_describe[1] = get_describe(file, &act, 1);
+	champion_describe[0] = get_describe(file, act, 0);
+	champion_describe[1] = get_describe(file, act, 1);
 	if (!champion_describe[0] || !champion_describe[1])
 	{
 		ft_free_ar((void**)champion_describe);
