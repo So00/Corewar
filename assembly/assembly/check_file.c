@@ -6,7 +6,7 @@
 /*   By: atourner <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 15:10:56 by atourner          #+#    #+#             */
-/*   Updated: 2018/04/16 20:28:29 by atourner         ###   ########.fr       */
+/*   Updated: 2018/04/19 11:05:22 by atourner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static	char	**read_file(int fd)
 	return (act);
 }
 
-int		valid_name(char *name)
+int				valid_name(char *name)
 {
 	unsigned int		i;
 
@@ -56,7 +56,7 @@ int		valid_name(char *name)
 	return (0);
 }
 
-int		*val_asm(int fd)
+int				*val_asm(int fd)
 {
 	char	**file;
 	int		*ret;

@@ -6,7 +6,7 @@
 /*   By: atourner <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 09:36:35 by atourner          #+#    #+#             */
-/*   Updated: 2018/04/18 18:41:28 by atourner         ###   ########.fr       */
+/*   Updated: 2018/04/19 17:02:11 by atourner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,18 @@ int		get_len(char **file, int i, int *act)
 	len = 0;
 	while (file[line] && file[line][i] != '\"')
 	{
-		i++;
-		len++;
 		if (!file[line][i])
 		{
 			if (!file[line + 1])
 				return (-1);
-			i = 0;
+			i = -1;
 			line++;
 		}
+		i++;
+		len++;
 	}
-	*act = line + 1;
+	if (*act == 0)
+		*act = line + 1;
 	return (len);
 }
 
@@ -56,9 +57,8 @@ char	*get_content(char **file, int line, int act)
 	int				i;
 	int				len;
 
-	content = NULL;
 	i = 0;
-	if ((content = ft_strnew((act == 5 ? 128 : 200))))
+	if ((content = ft_strnew((line == 0 ? 128 : 2048))))
 	{
 		len = content_start(&file[line][act], act);
 		while (file[line][len] != '\"')
@@ -75,49 +75,53 @@ char	*get_content(char **file, int line, int act)
 		}
 	}
 	return (content);
-
 }
 
-char	*get_name(char **file, int *act)
+char	*get_describe(char **file, int *act, int choice)
 {
 	int			len;
 
-	if (!strncmp(file[0], ".name", 5) && (len = get_len(file, content_start(&file[0][5], 5), act) > 0) && len <= 128)
-		return (get_content(file, 0, 5));
+	len = 0;
+	if (!choice)
+	{
+		if (!strncmp(file[0], ".name", 5)
+		&& ((len = get_len(file, content_start(&file[0][5], 5), act)) > 0)
+		&& len <= 128)
+			return (get_content(file, 0, content_start(&file[0][5], 5)));
+		else
+			ft_printf("%s\n", len <= 0 ? "Wrong name format" : "Max name len is\
+128");
+	}
+	else
+	{
+		if (!strncmp(file[*act], ".comment", 8)
+		&& ((len = get_len(file, content_start(&file[*act][8], 8), act)) > 0)
+		&& len <= 2048)
+			return (get_content(file, *act, 8));
+		else
+			ft_printf("%s\n", len <= 0 ? "Wrong comment format" : "Max comment \
+len is 2048");
+	}
 	return (NULL);
-}
-
-char	*get_comment(char **file, int *line)
-{
-	int		len;
-	int		save_start;
-
-	save_start = *line;
-	if (!strncmp(file[*line], ".comment", 8) && (len = get_len(file, content_start(&file[*line][8], 8), line)))
-		return (get_content(file, save_start, 8));
-	return (NULL);
-}
-
-void	get_name_and_comment(char **file, char **champion_describe)
-{
-	int		act;
-
-	act = 0;
-	champion_describe[0] = get_name(file, &act);
-	ft_printf("%s\n", champion_describe[0]);
-	champion_describe[1] = get_comment(file, &act);
-	ft_printf("%s\n", champion_describe[1]);
 }
 
 char	**check_name_and_comment(char **file)
 {
 	char	**champion_describe;
+	int		act;
 
+	act = 0;
 	if (!(champion_describe = (char**)malloc(sizeof(char*) * 2)))
 	{
 		ft_printf("Malloc error\nCheck your memory\n");
 		return (NULL);
 	}
-	get_name_and_comment(file, champion_describe);
+	champion_describe[0] = get_describe(file, &act, 0);
+	champion_describe[1] = get_describe(file, &act, 1);
+	if (!champion_describe[0] || !champion_describe[1])
+	{
+		ft_free_ar((void**)champion_describe);
+		return (NULL);
+	}
 	return (champion_describe);
 }
