@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_label.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: atourner <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/04/20 10:40:02 by atourner          #+#    #+#             */
+/*   Updated: 2018/04/20 17:05:41 by atourner         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 #include "asm.h"
 #include "op.h"
@@ -13,7 +25,34 @@ t_label		*search_last(t_label *first)
 	return (last->next);
 }
 
-int			get_current_label(char **name, int *line, t_label **first)
+int			is_letter_in_label_name(char test)
+{
+	char	*label_chars = LABEL_CHARS;
+
+	while (*label_chars)
+		if (*label_chars == test)
+			return (1);
+		else
+			label_chars++;
+	return (0);
+}
+
+int			label_name_valid(char *line, char **name)
+{
+	int		i;
+
+	i = 0;
+	while (ft_iswhitespace(line[i]))
+		i++;
+	while (line[i] && is_letter_in_label_name(line[i]))
+		i++;
+	if (line[i] == ':')
+		if (name && (*name = ft_strndup(line, i)))
+			return (1);
+	return (0);
+}
+
+int			get_current_label(char **file, int *line, t_label **first)
 {
 	t_label		*act;
 
@@ -22,25 +61,49 @@ int			get_current_label(char **name, int *line, t_label **first)
 		act = (t_label*)ft_memalloc(sizeof(t_label));
 	else
 		act = search_last(*first);
-	if (new_label(name, line))
+	if (!act || !label_name_valid(file[*line], &act->name))
 	{
-		
+		ft_printf("Wrong label file : line %d file %s\n", *line, file[*line]);
+		return (-1);
 	}
 	else
-		while (!new_label(name, line))
-			get_op(name, line, act);
+	{
+		if (get_opt(file, line, act) >= 0)
+			return (1);
+		return (0);
+	}
 }
 
-t_label		*get_label(char **name, int line)
+void		skip_comment_and_empty_line(char **file, int *line)
+{
+	int		i;
+
+	i = 0;
+	while (file[*line])
+	{
+		if (!ft_iswhitespace(file[*line][i]) && file[*line][i])
+			return ;
+		if (!file[*line][i])
+		{
+			i = -1;
+			*line += 1;
+		}
+		i++;
+	}
+}
+
+t_label		*get_label(char **file, int line)
 {
 	t_label		*first;
 
 	first = NULL;
-	if (!name)
+	if (!file)
 		return (NULL);
-	while (name[line])
+	while (file[line])
 	{
-		get_current_label(name, &line, &first);
+		skip_comment_and_empty_line(file, &line);
+		if (!get_current_label(file, &line, &first))
+			return (NULL);
 	}
 	return (NULL);
 }

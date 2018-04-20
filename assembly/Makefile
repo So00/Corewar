@@ -6,7 +6,7 @@
 #    By: atourner <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 10:42:44 by atourner          #+#    #+#              #
-#    Updated: 2018/04/18 10:10:18 by atourner         ###   ########.fr        #
+#    Updated: 2018/04/20 14:49:59 by atourner         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,8 @@ SRC_ASSEMBLY = \
 			printf_file.c\
 			is_file_valid.c\
 			name_comment.c\
+			get_label.c\
+			get_opt.c\
 
 SRC = $(addprefix $(SRC_PATH), $(SRC_ASSEMBLY))
 

@@ -6,7 +6,7 @@
 /*   By: atourner <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 15:18:55 by atourner          #+#    #+#             */
-/*   Updated: 2018/04/18 14:46:59 by atourner         ###   ########.fr       */
+/*   Updated: 2018/04/20 13:52:44 by atourner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,7 @@ int		*turn_into_hex(char **file);
 int		*is_file_valid(char **file);
 char	**check_name_and_comment(char **file, int *act);
 t_label	*get_label(char **name, int line);
+int		get_opt(char **file, int *line, t_label *act);
+int		label_name_valid(char *file, char **name);
 
 #endif
