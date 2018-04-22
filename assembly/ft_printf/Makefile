@@ -110,18 +110,19 @@ SRC = $(addprefix $(SRC_PATH), $(SRC_NAME))
 
 COMP_NAME = $(SRC:.c=.o)
 
-all : $(NAME)
+all : comp $(NAME)
 
 %.o : %.c
 	@gcc $(FLAGS) -o $@ -c $< -Iincludes
+	@printf "\033[0;31mCompilation of \033[0m\033[0;32m$<\033[0m\r"
+
+comp :
+	@echo "\033[0;35mBegin of compilation of library\033[0m"
 
 $(NAME) : $(COMP_NAME)
-	@echo "\033[0;35mError detected in library\033[0m"
-	@sleep 2
-	@echo "\033[0;33mFixed\033[0m"
 	@ar rc $(NAME) $(COMP_NAME)
 	@ranlib $(NAME)
-	@echo "\033[0;35mCompilation de la librairie finie\033[0m"
+	@echo "\n\033[0;35mCompilation de la librairie finie\033[0m"
 
 clean :
 	@echo "\033[0;31mPiou piou partially erased zone\033[0m"

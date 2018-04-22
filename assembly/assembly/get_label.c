@@ -56,14 +56,16 @@ int			get_current_label(char **file, int *line, t_label **first)
 {
 	t_label		*act;
 
-	act = *first;
-	if (!act)
+	if (!*first)
+	{
 		act = (t_label*)ft_memalloc(sizeof(t_label));
+		*first = act;
+	}
 	else
 		act = search_last(*first);
-	if (!act || !label_name_valid(file[*line], &act->name))
+	if (!act || (!label_name_valid(file[*line], &act->name) && (*first)->next))
 	{
-		ft_printf("Wrong label file : line %d file %s\n", *line, file[*line]);
+		ft_printf("Error line %d file %s\n", *line, file[*line]);
 		return (-1);
 	}
 	else
@@ -82,8 +84,9 @@ void		skip_comment_and_empty_line(char **file, int *line)
 	while (file[*line])
 	{
 		if (!ft_iswhitespace(file[*line][i]) && file[*line][i])
-			return ;
-		if (!file[*line][i])
+			if (file[*line][i] != '#')
+				return ;
+		if (!file[*line][i] || file[*line][i] == '#')
 		{
 			i = -1;
 			*line += 1;
@@ -102,7 +105,7 @@ t_label		*get_label(char **file, int line)
 	while (file[line])
 	{
 		skip_comment_and_empty_line(file, &line);
-		if (!get_current_label(file, &line, &first))
+		if (get_current_label(file, &line, &first) < 0)
 			return (NULL);
 	}
 	return (NULL);

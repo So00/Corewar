@@ -92,25 +92,25 @@ char	*get_describe(char **file, int *act, int choice)
 	int			save;
 
 	get_describe_len(&name_len, &cmd_len, &len);
+	save = *act;
 	if (!choice)
 	{
-		if (!strncmp(file[0], NAME_CMD_STRING, name_len) && ((len =
-		get_len(file, content_start(&file[0][name_len], name_len), act)) > 0)
-		&& len <= 128)
-			return (get_content(file, 0, content_start(&file[0][name_len], 5)));
+		if (!strncmp(file[*act], NAME_CMD_STRING, name_len) && ((len =
+		get_len(file, content_start(&file[*act][name_len], name_len), act)) > 0)
+		&& len <= PROG_NAME_LENGTH)
+			return (get_content(file, save, content_start(&file[save][name_len], 5)));
 		else
 			ft_printf("%s\n", len <= 0 ? "Wrong name format" : "Max name len is\
 128");
 	}
 	else
 	{
-		save = *act;
 		if (!strncmp(file[*act], COMMENT_CMD_STRING, cmd_len) && ((len =
-		get_len(file, content_start(&file[*act][cmd_len], cmd_len), act)) > 0)
-		&& len <= 2048)
+		get_len(file, content_start(&file[*act][cmd_len], cmd_len), act)) >= 0)
+		&& len <= COMMENT_LENGTH)
 			return (get_content(file, save, 8));
 		else
-			ft_printf("%s\n", len <= 0 ? "Wrong comment format" : "Max comment \
+			ft_printf("%s\n", len < 0 ? "Wrong comment format" : "Max comment \
 len is 2048");
 	}
 	return (NULL);
@@ -126,7 +126,9 @@ char	**check_name_and_comment(char **file, int *act)
 		ft_printf("Malloc error\nCheck your memory\n");
 		return (NULL);
 	}
+	skip_comment_and_empty_line(file, act);
 	champion_describe[0] = get_describe(file, act, 0);
+	skip_comment_and_empty_line(file, act);
 	champion_describe[1] = get_describe(file, act, 1);
 	if (!champion_describe[0] || !champion_describe[1])
 	{

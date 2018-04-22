@@ -46,10 +46,12 @@ $(NAME) : $(COMP_NAME)
 clean :
 	@echo "\033[0;31mPiou piou partially erased zone\033[0m"
 	@rm -f $(COMP_NAME)
+	@make clean -C ft_printf
 
 fclean : clean
 	@echo "\033[0;31mPiou piou sector clear\033[0m"
 	@rm -f $(NAME)
+	@make fclean -C ft_printf
 
 re : recompil fclean all
 
